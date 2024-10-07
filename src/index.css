@@ -1,0 +1,20 @@
+body {
+    font-family: 'Outfit', sans-serif;
+}
+
+:root {
+    --color-primary: #fc06c6;
+    --color-secondary: #010101;
+    --color-light: #fff
+}
+
+.btnAddRegister {
+    background-color: var(--color-primary);
+    color: var(--color-light);
+}
+
+.btnAddRegister:hover {
+    background-color: var(--color-primary);
+    color: lavender;
+    box-shadow: 1px 3px 3px 3px #ccc;
+}

@@ -1,0 +1,37 @@
+.home {
+    width: 85vw;
+    padding: 1rem;
+}
+
+.btn-limpiar-filtros {
+    width: 100%;
+    color: var(--color-light);
+    background-color: var(--color-primary);
+}
+
+.btn-limpiar-filtros:hover {
+    background-color: var(--color-primary);
+    color: #fff;
+    box-shadow: 1px 3px 3px 3px #ccc;
+}
+
+.bg-table {
+    background-color: #ca4f4f !important;
+    border-radius: 10px !important;
+}
+
+.filter {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-right: 12%;
+}
+
+.total {
+    padding: 1rem 0;
+    background-color: var(--color-light);
+    position: sticky;
+    bottom: 0;
+}

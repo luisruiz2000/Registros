@@ -1,0 +1,38 @@
+.formRegister {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.close {
+    font-size: 1.3rem !important;
+    color: var(--color-secondary);
+}
+
+.close:hover {
+    color: rgb(145, 1, 1);
+}
+
+.inputModal {
+    margin-bottom: 1rem;
+}
+
+.btnSaveModal {
+    background-color: var(--color-primary);
+    color: #fff;
+}
+
+.btnSaveModal:hover{
+    background-color: var(--color-primary);
+    color: #fff;
+    box-shadow: 1px 3px 3px 3px #ccc;
+}
+
+.btnCloseModal:hover  {
+    box-shadow: 1px 3px 3px 3px #ccc;
+}
+
+.invalid:focus {
+    border: 1px solid red;
+    box-shadow: 1px 3px 3px 3px #ccc;
+}
