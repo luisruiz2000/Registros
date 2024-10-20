@@ -6,7 +6,7 @@ import Contabilidad from "./Contabilidad/Contabilidad";
 
 function App() {
   return (
-    <div className="d-flex">
+    <div className="content">
       <Sidebar />
 
         <Routes>

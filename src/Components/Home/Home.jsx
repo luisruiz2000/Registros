@@ -3,6 +3,7 @@ import ModalAddRegister from "../../shared/ModalAddRegister/ModalAddRegister";
 import "./home.css";
 import FechaHora from "../../shared/FechaHora/FechaHora";
 import ExportExcel from "../../shared/ExportExcel/ExportExcel.jsx";
+import { PORCENTAJES } from "../../Constants/constants.js";
 
 const Home = () => {
   const [registers, setRegisters] = useState([]);
@@ -13,6 +14,10 @@ const Home = () => {
     Servicio: "",
     MetodoPago: "",
   });
+
+
+  const { ORGANICA_PORC, PROMOCION_PORC, COMPLETO_PORC, CORTE_PORC,  HIDRATACION_PORC } = PORCENTAJES;
+
 
   const clearFilters = () => {
     setFiltersSelect({ Asesora: "", Servicio: "", MetodoPago: "" });
@@ -146,36 +151,32 @@ const Home = () => {
 
   const calculateNomina = () => {
     if (filtersSelect.Asesora) {
+      const porcentajePorServicio = {
+        Promocion: PROMOCION_PORC,
+        Completo: COMPLETO_PORC,
+        Organica: ORGANICA_PORC,
+        Corte: CORTE_PORC,
+        Lavado: CORTE_PORC, // Asumo que "Lavado" comparte el porcentaje de "Corte"
+        Hidratacion: HIDRATACION_PORC
+      };
+    
       const totalNomina = registers.reduce(
         (accumulator, { servicio, adicional }) => {
-          if (servicio === "Promocion") {
-            console.log("====================================");
-            console.log(servicio);
-            console.log("====================================");
-            accumulator += 15000;
+          // Agregar el porcentaje del servicio si existe
+          if (porcentajePorServicio[servicio]) {
+            accumulator += porcentajePorServicio[servicio];
           }
-          if (servicio === "Completo") {
-            console.log(servicio);
-            accumulator += 30000;
+    
+          // Agregar el porcentaje del adicional si existe
+          if (porcentajePorServicio[adicional]) {
+            accumulator += porcentajePorServicio[adicional];
           }
-
-          if (servicio === "Organica") {
-            console.log(servicio);
-
-            accumulator += 25000;
-          }
-
-          if (adicional === "Corte" || adicional === "Lavado") {
-            accumulator += 5000;
-          }
-
-          if (adicional === "Hidratacion") {
-            accumulator += 4000;
-          }
-          return accumulator; // Retornas el acumulador para la siguiente iteración
+    
+          return accumulator; // Retornamos el acumulador para la siguiente iteración
         },
         0
       ); // El valor inicial del acumulador es 0
+    
       setTotal(totalNomina); // Actualizar el total
     }
   };

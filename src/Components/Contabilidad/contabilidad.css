@@ -1,3 +1,22 @@
 .contabilidad {
-    padding: 1rem;
+    width: 80%;
+    padding: 2rem 5rem;
+}
+
+
+.cantidadNomina {
+    display: flex !important;
+    flex: 1 !important;
+}
+
+.table {
+    margin: 1rem 2rem 2rem 0;
+}
+
+.nomina {
+    display: flex;
+}
+
+.itemNomina {
+    font-size: 1.3rem;
 }
