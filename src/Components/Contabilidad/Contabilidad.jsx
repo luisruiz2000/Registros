@@ -5,7 +5,9 @@ import AddGastos from "../../shared/ModalAddGastos/AddGastos";
 
 const Contabilidad = () => {
   const [registers, setRegisters] = useState([]);
-  const [gastos, setGastos] = useState('');
+  const [gastos, setGastos] = useState("");
+  const [efectivo, setEfectivo] = useState(0);
+  const [transferencias, setTransferencias] = useState(0);
 
   useEffect(() => {
     // Obtener los registros del localStorage
@@ -84,6 +86,29 @@ const Contabilidad = () => {
     return totalNomina;
   };
 
+  // Método para filtrar y sumar pagos en efectivo
+  const sumarPagosEfectivo = (register) => {
+    const efectivoTotal = register
+      .filter((item) => item.metodoPago === "Efectivo")
+      .reduce((total, item) => total + parseInt(item.pago), 0);
+
+    setEfectivo(efectivoTotal);
+  };
+
+  // Método para filtrar y sumar pagos por transferencia
+  const sumarPagosTransferencia = (register) => {
+    const transferenciasTotal = register
+      .filter((item) => item.metodoPago === "Transferencia")
+      .reduce((total, item) => total + parseInt(item.pago), 0);
+
+    setTransferencias(transferenciasTotal);
+  };
+
+  useEffect(() => {
+    sumarPagosEfectivo(registers);
+    sumarPagosTransferencia(registers);
+  }, [registers]);
+
   // Función para formatear la moneda
   const formatCurrency = (amount) => {
     // Asegurarse de que el valor es un número
@@ -92,6 +117,29 @@ const Contabilidad = () => {
     // Convertir a número y formatear
     return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
+
+  const limpiarGastos = () => {
+    // Establece el valor de 'gastos' en 0
+    localStorage.setItem("gastos", "0");
+
+    // Obtiene el valor de 'gastos' del localStorage
+    const gastosTotal = localStorage.getItem("gastos");
+
+    // Asegúrate de convertirlo a número antes de establecerlo en el estado
+    setGastos(Number(gastosTotal));
+  };
+
+  // Calcular la suma total de nómina
+  const calcularTotalNomina = () => {
+    return ASESORAS.reduce(
+      (total, asesora) => total + calcularNominaPorAsesora(asesora),
+      0
+    );
+  };
+
+  // Calcular utilidades: Total Producido - (Total Nómina + Total Gastos)
+  const utilidades =
+    efectivo + transferencias - (calcularTotalNomina() + parseFloat(gastos));
 
   return (
     <div className="contabilidad">
@@ -151,16 +199,51 @@ const Contabilidad = () => {
           <ul>
             {ASESORAS.map((asesora) => {
               const nomina = calcularNominaPorAsesora(asesora);
-              return (
-                <li className="itemNomina" key={asesora}>
-                  {asesora}: ${formatCurrency(nomina)}
-                </li>
-              );
+
+              // Verificar si la nómina es mayor a 0 antes de renderizarla
+              if (nomina > 0) {
+                return (
+                  <li className="itemNomina" key={asesora}>
+                    {asesora}: ${formatCurrency(nomina)}
+                  </li>
+                );
+              }
+              return null; // No renderizar nada si la nómina es 0
             })}
+            {/* Mostrar Total de Gastos */}
+            <li className="itemNomina">
+              Total de Gastos: ${formatCurrency(gastos)}
+              <i
+                className="bi bi-trash3-fill limpiar_gastos"
+                onClick={limpiarGastos}></i>{" "}
+              {/* Cambiado aquí */}
+            </li>
           </ul>
         </div>
 
-        <h4 className="mt-4">Total de Gastos: ${formatCurrency(gastos)}</h4>
+        <div className="me-5">
+          <h3>Producido del día</h3>
+          {/* Solo mostrar si efectivo o transferencias son mayores a 0 */}
+          {efectivo > 0 && (
+            <li className="itemNomina">
+              Total Efectivo:<b> ${formatCurrency(efectivo)}</b>
+            </li>
+          )}
+          {transferencias > 0 && (
+            <li className="itemNomina">
+              Total Transferencia:<b> ${formatCurrency(transferencias)}</b>
+            </li>
+          )}
+
+          {/* Mostrar Total producido */}
+          <h3 className="mt-3">
+            Total producido:{" "}
+            <b> ${formatCurrency(efectivo + transferencias)}</b>
+          </h3>
+
+          {/* Mostrar Utilidades */}
+        </div>
+        <h1>Utilidades: ${formatCurrency(utilidades)}</h1>
       </section>
 
       {/* Agrega el componente AddGastos y pasa la función handleGastoAgregado */}

@@ -20,3 +20,9 @@
 .itemNomina {
     font-size: 1.3rem;
 }
+
+.limpiar_gastos {
+    color: rgba(255, 0, 0, 0.658);
+    margin-left: .5rem;
+    cursor: pointer;
+}
