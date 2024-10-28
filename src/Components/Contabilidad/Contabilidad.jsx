@@ -63,6 +63,7 @@ const Contabilidad = () => {
   const calcularNominaPorAsesora = (asesora) => {
     let totalNomina = 0;
 
+    // Cálculo para asesoras con nómina variable
     registers
       .filter((register) => register.asesora === asesora)
       .forEach(({ servicio, adicional }) => {
@@ -111,30 +112,28 @@ const Contabilidad = () => {
 
   // Función para formatear la moneda
   const formatCurrency = (amount) => {
-    // Asegurarse de que el valor es un número
     if (isNaN(amount)) return amount;
-
-    // Convertir a número y formatear
     return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
 
   const limpiarGastos = () => {
-    // Establece el valor de 'gastos' en 0
     localStorage.setItem("gastos", "0");
-
-    // Obtiene el valor de 'gastos' del localStorage
     const gastosTotal = localStorage.getItem("gastos");
-
-    // Asegúrate de convertirlo a número antes de establecerlo en el estado
     setGastos(Number(gastosTotal));
   };
 
-  // Calcular la suma total de nómina
+  // Calcular la suma total de nómina incluyendo a Dahiana y Valentina
   const calcularTotalNomina = () => {
-    return ASESORAS.reduce(
+    let totalNomina = ASESORAS.reduce(
       (total, asesora) => total + calcularNominaPorAsesora(asesora),
       0
     );
+
+    // Añadir las nóminas fijas de Dahiana y Valentina
+    totalNomina += 50000; // Nómina fija de Dahiana
+    totalNomina += 65000; // Nómina fija de Valentina
+
+    return totalNomina;
   };
 
   // Calcular utilidades: Total Producido - (Total Nómina + Total Gastos)
@@ -154,13 +153,11 @@ const Contabilidad = () => {
         {ASESORAS.map((asesora) => {
           const serviciosPorAsesora = contarServiciosPorAsesora(asesora);
 
-          // Sumamos la cantidad de todos los servicios para esta asesora
           const totalServicios = Object.values(serviciosPorAsesora).reduce(
             (acc, cantidad) => acc + cantidad,
             0
           );
 
-          // Si la asesora no tiene ningún servicio realizado, no renderizamos la tabla
           if (totalServicios === 0) {
             return null;
           }
@@ -168,9 +165,7 @@ const Contabilidad = () => {
           return (
             <div key={asesora} className="table">
               <h3>{asesora}</h3>
-              <table
-                className="table table-striped table-hover"
-                style={{ width: "100%", marginBottom: "20px" }}>
+              <table className="table table-striped table-hover" style={{ width: "100%", marginBottom: "20px" }}>
                 <thead className="table-dark">
                   <tr>
                     <th>Servicio</th>
@@ -200,7 +195,6 @@ const Contabilidad = () => {
             {ASESORAS.map((asesora) => {
               const nomina = calcularNominaPorAsesora(asesora);
 
-              // Verificar si la nómina es mayor a 0 antes de renderizarla
               if (nomina > 0) {
                 return (
                   <li className="itemNomina" key={asesora}>
@@ -208,22 +202,23 @@ const Contabilidad = () => {
                   </li>
                 );
               }
-              return null; // No renderizar nada si la nómina es 0
+              return null; 
             })}
+            {/* Mostrar nómina fija de Dahiana */}
+            <li className="itemNomina">Dahiana: $50,000</li>
+            {/* Mostrar nómina fija de Valentina */}
+            <li className="itemNomina">Valentina: $65,000</li>
+
             {/* Mostrar Total de Gastos */}
             <li className="itemNomina">
               Total de Gastos: ${formatCurrency(gastos)}
-              <i
-                className="bi bi-trash3-fill limpiar_gastos"
-                onClick={limpiarGastos}></i>{" "}
-              {/* Cambiado aquí */}
+              <i className="bi bi-trash3-fill limpiar_gastos" onClick={limpiarGastos}></i>{" "}
             </li>
           </ul>
         </div>
 
         <div className="me-5">
           <h3>Producido del día</h3>
-          {/* Solo mostrar si efectivo o transferencias son mayores a 0 */}
           {efectivo > 0 && (
             <li className="itemNomina">
               Total Efectivo:<b> ${formatCurrency(efectivo)}</b>
@@ -241,7 +236,6 @@ const Contabilidad = () => {
             <b> ${formatCurrency(efectivo + transferencias)}</b>
           </h3>
 
-          {/* Mostrar Utilidades */}
         </div>
         <h1>Utilidades: ${formatCurrency(utilidades)}</h1>
       </section>
